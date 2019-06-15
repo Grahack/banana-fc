@@ -44,10 +44,10 @@ void MIDImessage2(int command, int data1, int data2) {
 }
 
 void press(int button) {
+    MIDImessage1(PC, button);
 }
 
 void release(int button) {
-    MIDImessage1(PC, button);
 }
 
 void long_press(int button) {
