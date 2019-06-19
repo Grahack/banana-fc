@@ -1,8 +1,17 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
+#include <LiquidCrystal.h>
 
+/**
+ * PINS
+ *      1 serial OUT
+ * 2 -  5 buttons
+ * 6 - 11 screen
+ **/
 // number of buttons
 #define NB 4
+// LCD pins init
+LiquidCrystal lcd(11, 10, 9, 8, 7, 6);
 // long press interval in millis
 #define LONG_PRESS_INTERVAL 500
 
@@ -44,6 +53,9 @@ void MIDImessage2(int command, int data1, int data2) {
 }
 
 void press(int button) {
+    lcd.setCursor(0, 1);
+    lcd.print("PRESET ");
+    lcd.print(button);
     MIDImessage1(PC, button);
 }
 
@@ -55,6 +67,8 @@ void long_press(int button) {
 
 void setup() {
     Serial.begin(31250);
+    lcd.begin(16, 2);
+    lcd.print(" << Banana FC >>");
     for (int i = 0; i < NB; i++){
         // button number i is on pin i+2
         // i starts from 0: i=0 for button numbered 1 on the hardware
