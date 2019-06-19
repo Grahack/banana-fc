@@ -57,6 +57,7 @@ void setup() {
     Serial.begin(31250);
     for (int i = 0; i < NB; i++){
         // button number i is on pin i+2
+        // i starts from 0: i=0 for button numbered 1 on the hardware
         pinMode(i+2, INPUT_PULLUP);
         B[i] = 0;
         P[i] = 0;
