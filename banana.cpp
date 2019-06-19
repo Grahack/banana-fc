@@ -40,6 +40,10 @@ bool B[NB];
 bool P[NB];
 // the date of last press
 long D[NB];
+// the 99 pages of buttons
+int pages[98][NB];
+// the current page
+int page;
 
 void MIDImessage1(int command, int data1) {
     Serial.write(command);
@@ -53,10 +57,11 @@ void MIDImessage2(int command, int data1, int data2) {
 }
 
 void press(int button) {
+    int data = pages[page][button];
     lcd.setCursor(0, 1);
     lcd.print("PRESET ");
-    lcd.print(button);
-    MIDImessage1(PC, button);
+    lcd.print(data + 1);
+    MIDImessage1(PC, data);
 }
 
 void release(int button) {
@@ -76,6 +81,12 @@ void setup() {
         B[i] = 0;
         P[i] = 0;
         D[i] = 0;
+    }
+    page = 0;
+    for (int i = 0; i < 99; i++) {
+        for (int j = 0; j < NB; j++) {
+            pages[i][j] = 4*i + j;
+        }
     }
 }
 
