@@ -69,7 +69,7 @@ void setup() {
     Serial.begin(31250);
     lcd.begin(16, 2);
     lcd.print(" << Banana FC >>");
-    for (int i = 0; i < NB; i++){
+    for (int i = 0; i < NB; i++) {
         // button number i is on pin i+2
         // i starts from 0: i=0 for button numbered 1 on the hardware
         pinMode(i+2, INPUT_PULLUP);
@@ -81,12 +81,12 @@ void setup() {
 
 void loop() {
     // check button state
-    for (int i = 0; i < NB; i++){
+    for (int i = 0; i < NB; i++) {
         // button number i is on pin i+2
         B[i] = digitalRead(i+2)==LOW? 1 : 0;
     }
     // handle button state
-    for (int i = 0; i < NB; i++){
+    for (int i = 0; i < NB; i++) {
         // press detect
         if (B[i] && !P[i]) {
             press(i);
@@ -101,7 +101,7 @@ void loop() {
         }
     }
     // store "previous button state" for next loop
-    for (int i = 0; i < NB; i++){
+    for (int i = 0; i < NB; i++) {
         P[i] = B[i];
     }
 }
