@@ -40,10 +40,28 @@ bool B[NB];
 bool P[NB];
 // the date of last press
 long D[NB];
+// the number of buttons that are pressed during a loop
+int total_pressed;
+// the number of buttons that were pressed during the previous loop
+int prev_total_pressed;
+// the buttons that will be taken into account for a simultaneous press
+bool S[NB];
 // the 99 pages of buttons
 int pages[98][NB];
 // the current page
 int page;
+
+void update_LCD_page(int page) {
+    lcd.setCursor(0, 0);
+    lcd.print("PAGE ");
+    lcd.print(page + 1);
+}
+
+void update_LCD_preset(int preset) {
+    lcd.setCursor(0, 1);
+    lcd.print("PRESET ");
+    lcd.print(preset + 1);
+}
 
 void MIDImessage1(int command, int data1) {
     Serial.write(command);
@@ -58,13 +76,21 @@ void MIDImessage2(int command, int data1, int data2) {
 
 void press(int button) {
     int data = pages[page][button];
-    lcd.setCursor(0, 1);
-    lcd.print("PRESET ");
-    lcd.print(data + 1);
+    update_LCD_preset(data);
     MIDImessage1(PC, data);
 }
 
 void release(int button) {
+}
+
+void simultaneous_release(bool S[]) {
+    if (S[0] && S[1] && !S[2] && !S[3] && page > 0) {
+        page--;
+        update_LCD_page(page);
+    } else if (!S[0] && !S[1] && S[2] && S[3] && page < 98) {
+        page++;
+        update_LCD_page(page);
+    }
 }
 
 void long_press(int button) {
@@ -81,6 +107,7 @@ void setup() {
         B[i] = 0;
         P[i] = 0;
         D[i] = 0;
+        S[i] = 0;
     }
     page = 0;
     for (int i = 0; i < 99; i++) {
@@ -91,15 +118,19 @@ void setup() {
 }
 
 void loop() {
+    total_pressed = 0;
     // check button state
     for (int i = 0; i < NB; i++) {
         // button number i is on pin i+2
         B[i] = digitalRead(i+2)==LOW? 1 : 0;
+        if (B[i]) {
+            total_pressed++;
+        }
     }
-    // handle button state
+    // handle single button state
     for (int i = 0; i < NB; i++) {
         // press detect
-        if (B[i] && !P[i]) {
+        if (B[i] && !P[i] && (total_pressed == 1)) {
             press(i);
             D[i] = millis();
         }
@@ -109,6 +140,21 @@ void loop() {
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
                 long_press(i);
             }
+        }
+    }
+    // accumulate pressed buttons
+    if (total_pressed > prev_total_pressed) {
+        for (int i = 0; i < NB; i++) {
+            S[i] = B[i];
+        }
+        prev_total_pressed = total_pressed;
+    }
+    // handle simultaneous release
+    if (prev_total_pressed > 1 && total_pressed == 0 ) {
+        for (int i = 0; i < NB; i++) {
+            S[i] = 0;
+            prev_total_pressed = 0;
+            simultaneous_release(S);
         }
     }
     // store "previous button state" for next loop
