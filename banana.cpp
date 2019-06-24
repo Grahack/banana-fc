@@ -92,6 +92,10 @@ void simultaneous_release(bool S[]) {
         page++;
         update_LCD_page(page);
     }
+    // use first preset of the page
+    int data = pages[page][0];
+    update_LCD_preset(data);
+    MIDImessage1(PC, data);
 }
 
 void long_press(int button) {
