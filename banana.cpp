@@ -104,10 +104,10 @@ void setup() {
         // button number i is on pin i+2
         // i starts from 0: i=0 for button numbered 1 on the hardware
         pinMode(i+2, INPUT_PULLUP);
-        B[i] = 0;
-        P[i] = 0;
+        B[i] = false;
+        P[i] = false;
         D[i] = 0;
-        S[i] = 0;
+        S[i] = false;
     }
     total_pressed = 0;
     prev_total_pressed = 0;
@@ -124,7 +124,7 @@ void loop() {
     // check button state
     for (int i = 0; i < NB; i++) {
         // button number i is on pin i+2
-        B[i] = digitalRead(i+2)==LOW? 1 : 0;
+        B[i] = digitalRead(i+2)==LOW? true : false;
         if (B[i]) {
             total_pressed++;
         }
