@@ -152,7 +152,7 @@ void loop() {
         prev_total_pressed = total_pressed;
     }
     // handle simultaneous release
-    if (prev_total_pressed > 1 && total_pressed == 0 ) {
+    if (prev_total_pressed > 1 && total_pressed == 0) {
         for (int i = 0; i < NB; i++) {
             S[i] = 0;
         }
