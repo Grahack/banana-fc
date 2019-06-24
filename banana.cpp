@@ -153,11 +153,11 @@ void loop() {
     }
     // handle simultaneous release
     if (prev_total_pressed > 1 && total_pressed == 0) {
+        simultaneous_release(S);
         for (int i = 0; i < NB; i++) {
             S[i] = 0;
         }
         prev_total_pressed = 0;
-        simultaneous_release(S);
     }
     // store "previous button state" for next loop
     for (int i = 0; i < NB; i++) {
