@@ -109,6 +109,8 @@ void setup() {
         D[i] = 0;
         S[i] = 0;
     }
+    total_pressed = 0;
+    prev_total_pressed = 0;
     page = 0;
     for (int i = 0; i < 99; i++) {
         for (int j = 0; j < NB; j++) {
@@ -153,9 +155,9 @@ void loop() {
     if (prev_total_pressed > 1 && total_pressed == 0 ) {
         for (int i = 0; i < NB; i++) {
             S[i] = 0;
-            prev_total_pressed = 0;
-            simultaneous_release(S);
         }
+        prev_total_pressed = 0;
+        simultaneous_release(S);
     }
     // store "previous button state" for next loop
     for (int i = 0; i < NB; i++) {
