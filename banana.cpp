@@ -62,6 +62,8 @@ void update_LCD_preset(int preset) {
     lcd.setCursor(0, 1);
     lcd.print("PRESET ");
     lcd.print(preset + 1);
+    // clean potential trailing character
+    lcd.print(" ");
 }
 
 void MIDImessage1(int command, int data1) {
