@@ -53,8 +53,9 @@ int page;
 
 void update_LCD_page(int page) {
     lcd.setCursor(0, 0);
-    lcd.print("PAGE ");
+    lcd.print(" <<  PAGE  ");
     lcd.print(page + 1);
+    lcd.print("  >>");
 }
 
 void update_LCD_preset(int preset) {
