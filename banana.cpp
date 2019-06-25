@@ -37,6 +37,9 @@ LiquidCrystal lcd(11, 10, 9, 8, 7, 6);
 // 0b11110000 non-musical commands
 #define NM 240
 
+// mode 0: normal mode
+// mode 1: edit mode
+int mode;
 // the state of the buttons
 bool B[NB];
 // the previous state of the buttons
@@ -83,16 +86,22 @@ void MIDImessage2(int command, int data1, int data2) {
     Serial.write(data2);
 }
 
-void press(int button) {
+void press_normal(int button) {
     int data = pages[page][button];
     update_LCD_preset(data);
     MIDImessage1(PC, data);
 }
 
-void release(int button) {
+void press_edit(int button) {
 }
 
-void simultaneous_release(bool S[]) {
+void release_normal(int button) {
+}
+
+void release_edit(int button) {
+}
+
+void simultaneous_release_normal(bool S[]) {
     if (S[0] && S[1] && !S[2] && !S[3] && page > 0) {
         page--;
         update_LCD_page(page);
@@ -106,7 +115,41 @@ void simultaneous_release(bool S[]) {
     MIDImessage1(PC, data);
 }
 
+void simultaneous_release_edit(bool S[]) {
+}
+
+void long_press_normal(int button) {
+}
+
+void long_press_edit(int button) {
+}
+
+void press(int button) {
+    switch (mode) {
+        case 0: press_normal(button); break;
+        case 1: press_edit(button); break;
+    }
+}
+
+void release(int button) {
+    switch (mode) {
+        case 0: release_normal(button); break;
+        case 1: release_edit(button); break;
+    }
+}
+
+void simultaneous_release(bool S[]) {
+    switch (mode) {
+        case 0: simultaneous_release_normal(S); break;
+        case 1: simultaneous_release_edit(S); break;
+    }
+}
+
 void long_press(int button) {
+    switch (mode) {
+        case 0: long_press_normal(button); break;
+        case 1: long_press_edit(button); break;
+    }
 }
 
 void setup() {
