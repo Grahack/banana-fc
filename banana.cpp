@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <LiquidCrystal.h>
+#include <EEPROM.h>
 
 /**
  * PINS
@@ -104,9 +105,10 @@ void long_press(int button) {
 }
 
 void setup() {
-    Serial.begin(31250);
+    // Welcome !
     lcd.begin(16, 2);
     lcd.print(" << Banana FC >>");
+    // init vars
     for (int i = 0; i < NB; i++) {
         // button number i is on pin i+2
         // i starts from 0: i=0 for button numbered 1 on the hardware
@@ -119,11 +121,43 @@ void setup() {
     total_pressed = 0;
     prev_total_pressed = 0;
     page = 0;
-    for (int i = 0; i < 99; i++) {
-        for (int j = 0; j < NB; j++) {
-            pages[i][j] = 4*i + j;
+    // check for BANANA at the end of the EEPROM
+    //int L = EEPROM.length();
+    //lcd.print(L);
+    int offset = 400;
+    int ASCII_BANANA[6] = {66, 65, 78, 65, 78, 65};
+    bool do_not_initialize = true;
+    for (int i = 0; i < 6; i++) {
+        int value = EEPROM.read(offset + i);
+        if (value != ASCII_BANANA[i]) {
+            do_not_initialize = false;
         }
     }
+    lcd.setCursor(0, 1);
+    if (!do_not_initialize) {
+        // init EEPROM and pages var
+        lcd.print("Init!");
+        for (int i = 0; i < 99; i++) {
+            for (int j = 0; j < NB; j++) {
+                pages[i][j] = 4*i + j;
+                EEPROM.write(4*i + j, 4*i + j);
+            }
+        }
+        // set the marker
+        for (int i = 0; i < 6; i++) {
+            EEPROM.write(offset + i, ASCII_BANANA[i]);
+        }
+    } else {
+        // read from EEPROM
+        lcd.print("OK");
+        for (int i = 0; i < 99; i++) {
+            for (int j = 0; j < NB; j++) {
+                pages[i][j] = EEPROM.read(4*i + j);
+            }
+        }
+    }
+    // other setup tasks
+    Serial.begin(31250);
 }
 
 void loop() {
