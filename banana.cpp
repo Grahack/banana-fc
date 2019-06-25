@@ -11,6 +11,8 @@
  **/
 // number of buttons
 #define NB 4
+// number of pages
+#define NP 99
 // LCD pins init
 LiquidCrystal lcd(11, 10, 9, 8, 7, 6);
 // long press interval in millis
@@ -47,8 +49,8 @@ int total_pressed;
 int prev_total_pressed;
 // the buttons that will be taken into account for a simultaneous press
 bool S[NB];
-// the 99 pages of buttons
-int pages[98][NB];
+// the NP pages of NB buttons
+int pages[NP][NB];
 // the current page
 int page;
 
@@ -137,7 +139,7 @@ void setup() {
     if (!do_not_initialize) {
         // init EEPROM and pages var
         lcd.print("Init!");
-        for (int i = 0; i < 99; i++) {
+        for (int i = 0; i < NP; i++) {
             for (int j = 0; j < NB; j++) {
                 pages[i][j] = 4*i + j;
                 EEPROM.write(4*i + j, 4*i + j);
@@ -150,7 +152,7 @@ void setup() {
     } else {
         // read from EEPROM
         lcd.print("OK");
-        for (int i = 0; i < 99; i++) {
+        for (int i = 0; i < NP; i++) {
             for (int j = 0; j < NB; j++) {
                 pages[i][j] = EEPROM.read(4*i + j);
             }
