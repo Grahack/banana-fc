@@ -64,9 +64,12 @@ void update_LCD_page(int page) {
 void update_LCD_preset(int preset) {
     lcd.setCursor(0, 1);
     lcd.print("PRESET ");
+    if (preset + 1 < 10) {
+        lcd.print(" ");
+    }
     lcd.print(preset + 1);
-    // clean potential trailing character
-    lcd.print(" ");
+    // clean potential trailing characters
+    lcd.print("         ");
 }
 
 void MIDImessage1(int command, int data1) {
@@ -135,7 +138,7 @@ void setup() {
             do_not_initialize = false;
         }
     }
-    lcd.setCursor(0, 1);
+    lcd.setCursor(6, 1);
     if (!do_not_initialize) {
         // init EEPROM and pages var
         lcd.print("Init!");
@@ -151,7 +154,7 @@ void setup() {
         }
     } else {
         // read from EEPROM
-        lcd.print("OK");
+        lcd.print("Ready");
         for (int i = 0; i < NP; i++) {
             for (int j = 0; j < NB; j++) {
                 pages[i][j] = EEPROM.read(4*i + j);
