@@ -149,27 +149,36 @@ void simultaneous_release_edit(bool S[]) {
     bool when_quiting = false;
     if (S[0] && S[1] && !S[2] && !S[3]) {
         // CANCEL
+        int data = pages[page][button];
+        MIDImessage1(PC, data);
         mode = 0;
         lcd.home();
-        lcd.print("CANCEL");
+        lcd.print("    CANCEL     ");
         when_quiting = true;
     } else if (!S[0] && !S[1] && S[2] && S[3]) {
         // COMMIT
-        mode = 0;
+        pages[page][button] = preset;
         lcd.home();
-        lcd.print("OK");
+        if (EEPROM.read(4*page + button) != preset) {
+            EEPROM.write(4*page + button, preset);
+            lcd.print("       OK       ");
+        } else {
+            lcd.print("    NO CHANGE   ");
+        }
+        MIDImessage1(PC, preset);
+        mode = 0;
         when_quiting = true;
     }
     if (when_quiting) {
         delay(1000);
-        MIDImessage1(PC, preset);
         update_LCD_page(page);
-        update_LCD_preset(pages[page][0]);
+        update_LCD_preset(pages[page][button]);
     }
 }
 
 void long_press_normal(int button) {
     mode = 1;
+    preset = pages[page][button];
     lcd.home();
     lcd.print("Editing ");
     if (page + 1 < 10) {
@@ -306,6 +315,7 @@ void loop() {
         // long press detect
         if (!already_long_pressed && B[i] && P[i] && (total_pressed == 1)) {
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
+                button = i;
                 long_press(i);
                 already_long_pressed = 1;
             }
