@@ -50,6 +50,8 @@ long D[NB];
 int total_pressed;
 // the number of buttons that were pressed during the previous loop
 int prev_total_pressed;
+// long press flag
+bool already_long_pressed;
 // the buttons that will be taken into account for a simultaneous press
 bool S[NB];
 // the NP pages of NB buttons
@@ -180,6 +182,7 @@ void setup() {
     }
     total_pressed = 0;
     prev_total_pressed = 0;
+    already_long_pressed = 0;
     page = 0;
     // check for BANANA at the end of the EEPROM
     //int L = EEPROM.length();
@@ -236,6 +239,14 @@ void loop() {
         if (B[i] && !P[i] && (total_pressed == 1)) {
             press(i);
             D[i] = millis();
+            already_long_pressed = 0;
+        }
+        // long press detect
+        if (!already_long_pressed && B[i] && P[i] && (total_pressed == 1)) {
+            if (millis() - D[i] > LONG_PRESS_INTERVAL) {
+                long_press(i);
+                already_long_pressed = 1;
+            }
         }
         // release and long release detect
         if (!B[i] && P[i]) {
