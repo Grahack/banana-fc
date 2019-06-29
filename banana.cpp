@@ -119,6 +119,11 @@ void simultaneous_release_edit(bool S[]) {
 }
 
 void long_press_normal(int button) {
+
+void long_release_edit(int button) {
+}
+
+void long_release_normal(int button) {
 }
 
 void long_press_edit(int button) {
@@ -149,6 +154,13 @@ void long_press(int button) {
     switch (mode) {
         case 0: long_press_normal(button); break;
         case 1: long_press_edit(button); break;
+    }
+}
+
+void long_release(int button) {
+    switch (mode) {
+        case 0: long_release_normal(button); break;
+        case 1: long_release_edit(button); break;
     }
 }
 
@@ -225,11 +237,11 @@ void loop() {
             press(i);
             D[i] = millis();
         }
-        // release and long press detect
+        // release and long release detect
         if (!B[i] && P[i] && (total_pressed == 1)) {
             release(i);
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
-                long_press(i);
+                long_release(i);
             }
         }
     }
