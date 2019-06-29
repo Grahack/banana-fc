@@ -16,7 +16,7 @@
 // LCD pins init
 LiquidCrystal lcd(11, 10, 9, 8, 7, 6);
 // long press interval in millis
-#define LONG_PRESS_INTERVAL 500
+#define LONG_PRESS_INTERVAL 1200
 
 // from https://www.instructables.com/id/Send-and-Receive-MIDI-with-Arduino/
 // see also https://www.midi.org/
