@@ -56,8 +56,12 @@ bool already_long_pressed;
 bool S[NB];
 // the NP pages of NB buttons
 int pages[NP][NB];
-// the current page
+// the current page (normal mode and edit mode)
 int page;
+// the current button (edit mode only)
+int button;
+// the preset to be commited to EEPROM
+int preset;
 
 void update_LCD_page(int page) {
     lcd.setCursor(0, 0);
@@ -101,6 +105,30 @@ void release_normal(int button) {
 }
 
 void release_edit(int button) {
+    switch (button) {
+        case 0:
+            if (preset >= 10) {
+                preset -= 10;
+            }
+            break;
+        case 1:
+            if (preset >= 1) {
+                preset -= 1;
+            }
+            break;
+        case 2:
+            if (preset < 127) {
+                preset += 1;
+            }
+            break;
+        case 3:
+            if (preset < 117) {
+                preset += 10;
+            }
+            break;
+    }
+    update_LCD_preset(preset);
+    MIDImessage1(PC, preset);
 }
 
 void simultaneous_release_normal(bool S[]) {
@@ -118,9 +146,40 @@ void simultaneous_release_normal(bool S[]) {
 }
 
 void simultaneous_release_edit(bool S[]) {
+    bool when_quiting = false;
+    if (S[0] && S[1] && !S[2] && !S[3]) {
+        // CANCEL
+        mode = 0;
+        lcd.home();
+        lcd.print("CANCEL");
+        when_quiting = true;
+    } else if (!S[0] && !S[1] && S[2] && S[3]) {
+        // COMMIT
+        mode = 0;
+        lcd.home();
+        lcd.print("OK");
+        when_quiting = true;
+    }
+    if (when_quiting) {
+        delay(1000);
+        MIDImessage1(PC, preset);
+        update_LCD_page(page);
+        update_LCD_preset(pages[page][0]);
+    }
 }
 
 void long_press_normal(int button) {
+    mode = 1;
+    lcd.home();
+    lcd.print("Editing ");
+    if (page + 1 < 10) {
+        lcd.print(" ");
+    }
+    lcd.print(page + 1);
+    lcd.print("-");
+    lcd.print(button + 1);
+    lcd.print("    ");
+}
 
 void long_release_edit(int button) {
 }
@@ -171,6 +230,7 @@ void setup() {
     lcd.begin(16, 2);
     lcd.print(" << Banana FC >>");
     // init vars
+    mode = 0;
     for (int i = 0; i < NB; i++) {
         // button number i is on pin i+2
         // i starts from 0: i=0 for button numbered 1 on the hardware
@@ -184,6 +244,8 @@ void setup() {
     prev_total_pressed = 0;
     already_long_pressed = 0;
     page = 0;
+    button = 0;
+    preset = 0;
     // check for BANANA at the end of the EEPROM
     //int L = EEPROM.length();
     //lcd.print(L);
