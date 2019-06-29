@@ -226,7 +226,7 @@ void loop() {
             D[i] = millis();
         }
         // release and long press detect
-        if (!B[i] && P[i]) {
+        if (!B[i] && P[i] && (total_pressed == 1)) {
             release(i);
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
                 long_press(i);
