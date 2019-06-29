@@ -311,7 +311,7 @@ void loop() {
             }
         }
         // release and long release detect
-        if (!B[i] && P[i]) {
+        if (!B[i] && P[i] && !already_long_pressed) {
             release(i);
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
                 long_release(i);
