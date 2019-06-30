@@ -159,8 +159,9 @@ void simultaneous_release_edit(bool S[]) {
         // COMMIT
         pages[page][button] = preset;
         lcd.home();
-        if (EEPROM.read(4*page + button) != preset) {
-            EEPROM.write(4*page + button, preset);
+        int addr = 4*page + button;
+        if (EEPROM.read(addr) != preset) {
+            EEPROM.write(addr, preset);
             lcd.print("       OK       ");
         } else {
             lcd.print("    NO CHANGE   ");
