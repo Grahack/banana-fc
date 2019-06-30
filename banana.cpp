@@ -58,8 +58,8 @@ bool S[NB];
 int pages[NP][NB];
 // the current page (normal mode and edit mode)
 int page;
-// the current button (edit mode only)
-int button;
+// the edited button (last long pressed, edit mode only)
+int edited_button;
 // the preset to be commited to EEPROM
 int preset;
 
@@ -149,7 +149,7 @@ void simultaneous_release_edit(bool S[]) {
     bool when_quiting = false;
     if (S[0] && S[1] && !S[2] && !S[3]) {
         // CANCEL
-        int data = pages[page][button];
+        int data = pages[page][edited_button];
         MIDImessage1(PC, data);
         mode = 0;
         lcd.home();
@@ -157,9 +157,9 @@ void simultaneous_release_edit(bool S[]) {
         when_quiting = true;
     } else if (!S[0] && !S[1] && S[2] && S[3]) {
         // COMMIT
-        pages[page][button] = preset;
+        pages[page][edited_button] = preset;
         lcd.home();
-        int addr = 4*page + button;
+        int addr = 4*page + edited_button;
         if (EEPROM.read(addr) != preset) {
             EEPROM.write(addr, preset);
             lcd.print("       OK       ");
@@ -173,7 +173,7 @@ void simultaneous_release_edit(bool S[]) {
     if (when_quiting) {
         delay(1000);
         update_LCD_page(page);
-        update_LCD_preset(pages[page][button]);
+        update_LCD_preset(pages[page][edited_button]);
     }
 }
 
@@ -254,7 +254,7 @@ void setup() {
     prev_total_pressed = 0;
     already_long_pressed = 0;
     page = 0;
-    button = 0;
+    edited_button = 0;
     preset = 0;
     // check for BANANA at the end of the EEPROM
     //int L = EEPROM.length();
@@ -316,7 +316,7 @@ void loop() {
         // long press detect
         if (!already_long_pressed && B[i] && P[i] && (total_pressed == 1)) {
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
-                button = i;
+                edited_button = i;
                 long_press(i);
                 already_long_pressed = 1;
             }
