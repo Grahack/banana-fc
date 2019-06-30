@@ -179,6 +179,7 @@ void simultaneous_release_edit(bool S[]) {
 
 void long_press_normal(int button) {
     mode = 1;
+    edited_button = button;
     preset = pages[page][button];
     lcd.home();
     lcd.print("Editing ");
@@ -316,7 +317,6 @@ void loop() {
         // long press detect
         if (!already_long_pressed && B[i] && P[i] && (total_pressed == 1)) {
             if (millis() - D[i] > LONG_PRESS_INTERVAL) {
-                edited_button = i;
                 long_press(i);
                 already_long_pressed = 1;
             }
