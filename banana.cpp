@@ -311,11 +311,14 @@ void loop() {
     }
     // handle single button state
     for (int i = 0; i < NB; i++) {
-        // press detect
-        if (B[i] && !P[i] && (total_pressed == 1)) {
-            press(i);
+        // set press date
+        if (B[i] && !P[i]) {
             D[i] = millis();
-            already_long_pressed = 0;
+            // press detect
+            if (total_pressed == 1) {
+                press(i);
+                already_long_pressed = 0;
+            }
         }
         // long press detect
         if (!already_long_pressed && B[i] && P[i] && (total_pressed == 1)) {
