@@ -192,13 +192,13 @@ void long_press_normal(int button) {
     lcd.print("    ");
 }
 
-void long_release_edit(int button) {
+void long_press_edit(int button) {
 }
 
 void long_release_normal(int button) {
 }
 
-void long_press_edit(int button) {
+void long_release_edit(int button) {
 }
 
 void press(int button) {
